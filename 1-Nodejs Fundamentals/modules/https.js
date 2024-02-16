@@ -1,5 +1,5 @@
-import { send } from "./request.mjs";
-import { read } from "./response.mjs";
+import { send } from "./request.js";
+import { read } from "./response.js";
 
 function customRequest(url, data) {
   send(url, data);
