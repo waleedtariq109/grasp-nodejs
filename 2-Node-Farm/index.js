@@ -1,5 +1,6 @@
 const fs = require("fs");
 const http = require("http");
+const url = require("url");
 
 // Host and Port
 const PORT = 8000;
@@ -38,13 +39,13 @@ const updateTemplate = (template, product) => {
 
 // Reading Data From json
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
-const productData = JSON.parse(data); // TODO: Use it later
+const productData = JSON.parse(data);
 
 const server = http.createServer((req, res) => {
-  const pathName = req.url;
+  const { pathname, query } = url.parse(req.url, true);
 
   // Overview Page
-  if (pathName === "/overview" || pathName === "/") {
+  if (pathname === "/overview" || pathname === "/") {
     res.writeHead(200, {
       "content-type": "text/html",
     });
@@ -55,11 +56,16 @@ const server = http.createServer((req, res) => {
     res.end(output);
 
     // Product Page
-  } else if (pathName === "/product") {
-    res.end("This is PRODUCT page");
+  } else if (pathname === "/product") {
+    res.writeHead(200, {
+      "content-type": "text/html",
+    });
+    const product = productData[query.id];
+    const output = updateTemplate(productTemplate, product);
+    res.end(output);
 
     // API
-  } else if (pathName === "/api") {
+  } else if (pathname === "/api") {
     res.writeHead(200, {
       "content-type": "application/json",
     });
