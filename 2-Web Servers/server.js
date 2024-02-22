@@ -1,4 +1,5 @@
 const http = require("http");
+const url = require("url");
 
 const HOSTNAME = "127.0.0.1";
 const PORT = 8000;
@@ -29,20 +30,48 @@ const homePageHtml = `
 </html>
 `;
 
+const friendLists = [
+  {
+    id: 1,
+    name: "Waleed",
+  },
+  {
+    id: 2,
+    name: "Hafiz saab",
+  },
+  {
+    id: 3,
+    name: "Zeeshan",
+  },
+  {
+    id: 4,
+    name: "Watto",
+  },
+  {
+    id: 5,
+    name: "Zaid",
+  },
+  {
+    id: 6,
+    name: "Hassan",
+  },
+];
+
 const server = http.createServer((req, res) => {
-  if (req.url === "/") {
+  const { path } = url.parse(req.url);
+  if (path === "/") {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/html");
     res.write(homePageHtml);
     res.end();
-  } else if (req.url === "/profile-data") {
-    res.end(
-      JSON.stringify({
-        profile_id: 1,
-        name: "Waleed",
-        national_id: 1982736567,
-      })
-    );
+  } else if (path === "/firends") {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify(friendLists));
   } else {
-    res.write("<h1>Page not found!");
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "text/html");
+    res.write("<h1>Page not found!</h1>");
     res.end();
   }
 });
