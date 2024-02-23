@@ -1,7 +1,6 @@
 const http = require("http");
 const url = require("url");
 
-const HOSTNAME = "127.0.0.1";
 const PORT = 8000;
 
 const homePageHtml = `
@@ -58,16 +57,24 @@ const friendLists = [
 ];
 
 const server = http.createServer((req, res) => {
-  const { path } = url.parse(req.url);
-  if (path === "/") {
+  const { path } = url.parse(req?.url);
+  const method = req?.method;
+  if (path === "/" && method === "GET") {
     res.statusCode = 200;
     res.setHeader("Content-Type", "text/html");
     res.write(homePageHtml);
     res.end();
-  } else if (path === "/firends") {
+  } else if (path === "/friends" && method === "GET") {
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify(friendLists));
+  } else if (path === "/friends" && method === "POST") {
+    console.log("Inside Post");
+    req.on("data", (data) => {
+      const friendData = data.toString();
+      console.log(`Request Data: ${friendData}`);
+      friendLists.push(JSON.parse(friendData));
+    });
   } else {
     res.statusCode = 400;
     res.setHeader("Content-Type", "text/html");
@@ -77,5 +84,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`The server is running on http://${HOSTNAME}:${PORT}`);
+  console.log(`The server is running on port ${PORT}`);
 });
