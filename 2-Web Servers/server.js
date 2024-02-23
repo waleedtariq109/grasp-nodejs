@@ -73,6 +73,7 @@ const server = http.createServer((req, res) => {
       const friendData = data.toString();
       friendLists.push(JSON.parse(friendData));
     });
+    req.pipe(res);
   } else {
     res.statusCode = 404;
     res.setHeader("Content-Type", "text/html");
