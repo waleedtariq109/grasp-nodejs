@@ -1,0 +1,17 @@
+{
+  "siteName": "Node App",
+  "navbarLinks": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Operations",
+      "url": "/operations"
+    },
+    {
+      "name": "History",
+      "url": "/history"
+    }
+  ]
+}
