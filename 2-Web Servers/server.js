@@ -69,14 +69,12 @@ const server = http.createServer((req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify(friendLists));
   } else if (path === "/friends" && method === "POST") {
-    console.log("Inside Post");
     req.on("data", (data) => {
       const friendData = data.toString();
-      console.log(`Request Data: ${friendData}`);
       friendLists.push(JSON.parse(friendData));
     });
   } else {
-    res.statusCode = 400;
+    res.statusCode = 404;
     res.setHeader("Content-Type", "text/html");
     res.write("<h1>Page not found!</h1>");
     res.end();
