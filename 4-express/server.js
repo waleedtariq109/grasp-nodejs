@@ -11,7 +11,7 @@ app.use((req, res, next) => {
   const requestStartTime = Date.now()
   next()
   const delta = Date.now() - requestStartTime
-  console.log(`${req.method} ${req.url} ${delta}ms`)
+  console.log(`${req.method} ${req.baseUrl}${req.url} ${delta}ms`)
 })
 
 app.use(express.json())
