@@ -8,6 +8,23 @@ const PORT = 3000
 
 const app = express()
 
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'hbs')
+
+app.get('/', (req, res) => {
+  res.render('index', {
+    title: 'Node',
+    caption: 'Node App'
+  })
+})
+
+app.get('/about', (req, res) => {
+  res.render('about', {
+    title: 'Node',
+    about: 'This is about'
+  })
+})
+
 app.use('/site', express.static(path.join(__dirname, 'public')))
 app.use(express.json())
 
