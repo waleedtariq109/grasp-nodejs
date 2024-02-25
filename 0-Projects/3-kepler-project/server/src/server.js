@@ -1,11 +1,19 @@
 const http = require("http");
 const app = require("./app");
 
+const { loadPlanetsData } = require("./models/planets.model");
+
 const PORT = process.env.PORT || 8000;
-const HOSTNAME = process.env.HOST || "127.0.0.1";
 
 const server = http.createServer(app);
 
-server.listen(PORT, HOSTNAME, () => {
-  console.log(`Server is running on http://${HOSTNAME}:${PORT}`);
-});
+(async () => {
+  try {
+    await loadPlanetsData();
+    server.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+})();
