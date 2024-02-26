@@ -2,19 +2,6 @@ const launches = new Map();
 
 let latestFlightNumber = 100;
 
-const launch = {
-  flightNumber: 100,
-  mission: "Kepler Exp X",
-  rocket: "Explore IS1",
-  launchDate: new Date("December 27, 2030"),
-  destination: "kepler-422 b",
-  customers: ["Nasa", "SpaceX"],
-  upcoming: true,
-  success: true,
-};
-
-launches.set(launch.flightNumber, launch);
-
 function getAllLaunches() {
   return Array.from(launches.values());
 }
@@ -32,7 +19,24 @@ function addNewLaunch(launch) {
   );
 }
 
+function isLaunchExists(id) {
+  return launches.has(id);
+}
+
+function abortLaunch(id) {
+  const abortedLaunch = launches.get(id);
+  launches.set(id, {
+    ...abortedLaunch,
+    upcoming: false,
+    success: false,
+  });
+
+  return abortedLaunch;
+}
+
 module.exports = {
   getAllLaunches,
   addNewLaunch,
+  abortLaunch,
+  isLaunchExists,
 };
