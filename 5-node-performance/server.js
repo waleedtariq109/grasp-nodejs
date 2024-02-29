@@ -1,11 +1,11 @@
-const express = require("express");
 const cluster = require("cluster");
+const os = require("os"); // -> Operating System
+
+const express = require("express");
 
 const app = express();
 
 const PORT = 3000;
-
-cluster.schedulingPolicy = cluster.SCHED_RR;
 
 function delay(duration) {
   const startTime = Date.now();
@@ -28,6 +28,7 @@ app.get("/timer", (_, res) => {
 
 if (cluster.isMaster) {
   console.log("Master Process has been started");
+
   cluster.fork();
   cluster.fork();
 } else {
