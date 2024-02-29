@@ -5,6 +5,8 @@ const express = require("express");
 
 const app = express();
 
+cluster.schedulingPolicy = cluster.SCHED_RR;
+
 const PORT = 3000;
 
 function delay(duration) {
@@ -26,11 +28,19 @@ app.get("/timer", (_, res) => {
   res.send(`Server responded: ${process.pid}`);
 });
 
-if (cluster.isMaster) {
-  console.log("Master Process has been started");
+/**
+ * os.cpus() returns an array and on eact array element
+ * we have an object which contains information about
+ * each core
+ * [{COR_1},{COR_2},{COR_3},{COR_4}]
+ */
 
-  cluster.fork();
-  cluster.fork();
+if (cluster.isMaster) {
+  const TOTAL_WORKERS = os.cpus().length;
+  for (let i = 0; i < TOTAL_WORKERS; i++) {
+    cluster.fork();
+  }
+  console.log("Master Process has been started");
 } else {
   console.log("Worker Process has been started");
   app.listen(PORT);
