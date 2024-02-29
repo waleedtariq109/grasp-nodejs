@@ -1,11 +1,10 @@
-const cluster = require("cluster");
-const os = require("os"); // -> Operating System
+const cluster = require("cluster"); // Required only for windows OS
 
 const express = require("express");
 
 const app = express();
 
-cluster.schedulingPolicy = cluster.SCHED_RR;
+cluster.schedulingPolicy = cluster.SCHED_RR; // Just windows OS things
 
 const PORT = 3000;
 
@@ -28,20 +27,4 @@ app.get("/timer", (_, res) => {
   res.send(`Server responded: ${process.pid}`);
 });
 
-/**
- * os.cpus() returns an array and on eact array element
- * we have an object which contains information about
- * each core
- * [{COR_1},{COR_2},{COR_3},{COR_4}]
- */
-
-if (cluster.isMaster) {
-  const TOTAL_WORKERS = os.cpus().length;
-  for (let i = 0; i < TOTAL_WORKERS; i++) {
-    cluster.fork();
-  }
-  console.log("Master Process has been started");
-} else {
-  console.log("Worker Process has been started");
-  app.listen(PORT);
-}
+app.listen(PORT);
