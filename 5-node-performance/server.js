@@ -1,10 +1,6 @@
-const cluster = require("cluster"); // Required only for windows OS
-
 const express = require("express");
 
 const app = express();
-
-cluster.schedulingPolicy = cluster.SCHED_RR; // Just windows OS things
 
 const PORT = 3000;
 
