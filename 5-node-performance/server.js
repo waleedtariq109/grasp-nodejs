@@ -19,7 +19,7 @@ app.get("/", (_, res) => {
 //* Blocking Route
 app.get("/timer", (_, res) => {
   // The delay function completely blocked the Event Loop
-  delay(100);
+  delay(9000);
   res.send(`Server responded: ${process.pid}`);
 });
 
