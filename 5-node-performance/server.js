@@ -23,8 +23,10 @@ app.get("/", (_, res) => {
 //* Blocking Route
 app.get("/timer", (_, res) => {
   // The delay function completely blocked the Event Loop
-  delay(9000);
+  delay(100);
   res.send(`Server responded: ${process.pid}`);
 });
 
+console.log("Server.js started...");
+console.log("Worker Process started...");
 app.listen(PORT);
