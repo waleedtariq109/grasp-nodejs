@@ -1,87 +1,46 @@
-const http = require("http");
-const url = require("url");
+// Node Example
+const fs = require("fs");
+const https = require("https");
+const axios = require("axios");
 
-const PORT = 8000;
+const buffer = fs.readFileSync("cert.crt");
+const keyBuffer = fs.readFileSync("key.pem");
+const csBuffer = fs.readFileSync("ca.pem");
 
-const homePageHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Home</title>
-  <style>
-    body{
-      width:100vw;
-      height:100vh;
-      background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-    }
-    h1{
-      font-size: 55px;
-      color: #f5f5f5;
-    }
-  </style>
-</head>
-<body>
-  <h1>This is Home page</h1>
-</body>
-</html>
-`;
+const cert = buffer.toString("utf-8");
+const key = keyBuffer.toString("utf-8");
+const ca = csBuffer.toString("utf-8");
 
-const friendLists = [
-  {
-    id: 1,
-    name: "Waleed",
-  },
-  {
-    id: 2,
-    name: "Hafiz saab",
-  },
-  {
-    id: 3,
-    name: "Zeeshan",
-  },
-  {
-    id: 4,
-    name: "Watto",
-  },
-  {
-    id: 5,
-    name: "Zaid",
-  },
-  {
-    id: 6,
-    name: "Hassan",
-  },
-];
-
-const server = http.createServer((req, res) => {
-  const { path } = url.parse(req?.url);
-  const method = req?.method;
-  if (path === "/" && method === "GET") {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/html");
-    res.write(homePageHtml);
-    res.end();
-  } else if (path === "/friends" && method === "GET") {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(friendLists));
-  } else if (path === "/friends" && method === "POST") {
-    req.on("data", (data) => {
-      const friendData = data.toString();
-      friendLists.push(JSON.parse(friendData));
+const httpsAgent = new https.Agent({
+  // This is your application certificate
+  cert,
+  // This is your private key associated with application certificate
+  key,
+  // This is Lean's public certificate chain.
+  ca,
+});
+const start = async () => {
+  try {
+    const request = await axios({
+      method: "post",
+      headers: {
+        "lean-app-token": "7d6a0c9f-2e37-4062-a07b-2d55ffe9e80f",
+      },
+      httpsAgent,
+      // You can change the end point per your need. This endpoint is good for
+      // testing mTLS
+      url: "https://mtls.sandbox.sa.leantech.me/verifications/v2/iban",
+      withCredentials: true,
+      jar: true,
+      data: JSON.stringify({
+        type: "PERSONAL",
+        iban: "SA2810000011100000461309",
+        identifications: [{ type: "NATIONAL_ID", value: "1106972886" }],
+      }),
     });
-    req.pipe(res);
-  } else {
-    res.statusCode = 404;
-    res.setHeader("Content-Type", "text/html");
-    res.write("<h1>Page not found!</h1>");
-    res.end();
+    console.log(request);
+  } catch (error) {
+    console.log(error);
   }
-});
-
-server.listen(PORT, () => {
-  console.log(`The server is running on port ${PORT}`);
-});
+};
+start();
